@@ -5,6 +5,7 @@ import { FixedSizeList as List } from 'react-window';
 import Swal from 'sweetalert2';
 import Modal from 'react-modal';
 import ExportToExcel from './Excel.jsx';
+import { debounce } from 'lodash';
 
 const MainBox = () => {
     const usePersistedState = (key, defaultValue) => {
@@ -18,7 +19,13 @@ const MainBox = () => {
     }
     const [inputLst, setInputLst] = usePersistedState('input', []);
     const [countLst, setCountLst] = usePersistedState('count', []);
+    const [displayLst, setDisplayLst] = React.useState([]);
     const inputForm = React.useRef();
+    const [query, setQuery] = React.useState('');
+
+    React.useEffect(() => {
+        setDisplayLst(R.filter(row => R.includes(query, R.keys(row)[0]), countLst))
+    }, [countLst, query])
 
     React.useEffect(() => {
         const counter = (uniqLst, oriLst) => {
@@ -28,7 +35,6 @@ const MainBox = () => {
         }
         counter(R.uniq(R.flatten(inputLst)), R.flatten(inputLst))
     }, [inputLst, setCountLst, setInputLst])
-
 
     const addInput = event => {
         event.preventDefault();
@@ -79,8 +85,8 @@ const MainBox = () => {
 
     const countRow = ({ index, style }) => (
         <div style={style}>
-            <b><u>{R.keys(countLst[index])[0]}:</u> </b>
-            {R.values(countLst[index])[0]} lần
+            <b><u>{R.keys(displayLst[index])[0]}:</u> </b>
+            {R.values(displayLst[index])[0]} lần
         </div>
     );
 
@@ -134,6 +140,10 @@ const MainBox = () => {
             closeModal();
         });
     }
+
+    const searchList = debounce(query => {
+        setQuery(query);
+    }, 250);
 
     return (
         <div className='mainbox w-75 shadow'>
@@ -407,9 +417,15 @@ const MainBox = () => {
                     </div>
                 </div>
                 <div className="col-3">
+                    <div className="input-group mb-1">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text"><i className="fa fa-search" aria-hidden="true" /></span>
+                        </div>
+                        <input className="form-control" type="number" name="countsearch" id="countsearch" onChange={event => searchList(event.target.value)} />
+                    </div>
                     <List
-                        height={580}
-                        itemCount={R.keys(countLst).length}
+                        height={550}
+                        itemCount={R.keys(displayLst).length}
                         itemSize={40}
                     >
                         {countRow}

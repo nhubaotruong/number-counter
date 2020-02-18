@@ -113,10 +113,10 @@ module.exports = () => {
           test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
           use: [
             {
-              loader: 'file-loader',
+              loader: 'url-loader',
               options: {
                 name: '[name].[ext]',
-                outputPath: 'assets/fonts/'
+                outputPath: './fonts/'
               }
             }
           ]
@@ -139,7 +139,6 @@ module.exports = () => {
       port: 5000,
       historyApiFallback: true,
       contentBase: path.join(__dirname, 'public'),
-      publicPath: '/',
       compress: true,
     },
     node: {
