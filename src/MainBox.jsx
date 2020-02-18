@@ -121,7 +121,7 @@ const MainBox = () => {
         for (let i = 1; i < 21; i++) {
             tempLst.push(event.target[`fix${i}`].value);
         }
-        confirm('Sửa dữ liệu', 'Bạn có muốn sửa dữ liệu', 'question', () => {
+        confirm('Sửa dữ liệu', 'Bạn có muốn sửa dữ liệu?', 'question', () => {
             setInputLst(R.update(currentIndex, tempLst, inputLst));
             closeModal();
         });
